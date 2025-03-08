@@ -3,9 +3,58 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import Attractions from './components/Attractions';
 import About from './components/About';
+import Actions from './components/Actions';
+import Visits from './components/Visits';
+import Logo from './components/Logo';
+import AdminDashboard from './components/AdminDashboard';
+import Footer from './components/Footer';
 
 const cities = ['Tanger', 'Marrakesh', 'Chefchaouen', 'Essaouira', 'Dakhla'];
 const categories = ['Hotel', 'Gastronomie', 'Nature', 'Sport'];
+
+const CategoryFilter = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem 0;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  & > div {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+`;
+
+const CategoryButton = styled.button`
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 25px;
+  background: ${props => props.$active ? '#e74c3c' : '#f5f5f5'};
+  color: ${props => props.$active ? 'white' : '#333'};
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background: ${props => props.$active ? '#c0392b' : '#e0e0e0'};
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+
 
 const Container = styled.div`
   width: 100%;
@@ -13,6 +62,9 @@ const Container = styled.div`
   padding: 0;
   font-family: 'Arial', sans-serif;
   overflow-x: hidden;
+  @media (max-width: 768px) {
+    padding: 0;
+  }
 `;
 
 const Hero = styled.div`
@@ -26,19 +78,13 @@ const Hero = styled.div`
   justify-content: center;
   color: white;
   text-align: center;
+  @media (max-width: 768px) {
+    height: 50vh;
+    margin-top: 50px;
+  }
 `;
 
-const CategoryFilter = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  padding: 2rem;
-  background: #f8f9fa;
-  margin: 0;
-  width: 100vw;
-  overflow-x: auto;
-  box-sizing: border-box;
-`;
+
 
 const Navbar = styled.nav`
   position: fixed;
@@ -52,18 +98,22 @@ const Navbar = styled.nav`
   display: flex;
   justify-content: space-between;
   align-items: center;
-`;
-
-const Logo = styled.div`
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #e74c3c;
+  @media (max-width: 768px) {
+    padding: 0.5rem 1rem;
+    flex-direction: column;
+  }
 `;
 
 const NavLinks = styled.div`
   display: flex;
   gap: 2rem;
   align-items: center;
+  @media (max-width: 768px) {
+    gap: 1rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 `;
 
 const NavLink = styled.a`
@@ -87,19 +137,7 @@ const Subtitle = styled(motion.p)`
   max-width: 600px;
 `;
 
-const CategoryButton = styled.button`
-  padding: 0.5rem 1.5rem;
-  border: 1px solid #ddd;
-  border-radius: 20px;
-  background: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  &:hover {
-    background: #e74c3c;
-    color: white;
-    border-color: #e74c3c;
-  }
-`;
+
 
 const Form = styled.form`
   max-width: 600px;
@@ -148,6 +186,9 @@ function App() {
   const [activeCity, setActiveCity] = useState(null);
   const [activeCategory, setActiveCategory] = useState(null);
   const [showAbout, setShowAbout] = useState(false);
+  const [showActions, setShowActions] = useState(false);
+  const [showVisits, setShowVisits] = useState(false);
+  const [showAdmin, setShowAdmin] = useState(false);
   const [formData, setFormData] = useState({
     nom: '',
     email: '',
@@ -172,16 +213,42 @@ function App() {
   return (
     <Container>
       <Navbar>
-        <Logo>MarocXplore</Logo>
+        <Logo />
         <NavLinks>
-          <NavLink href="#" onClick={() => setShowAbout(false)}>Accueil</NavLink>
-          <NavLink href="#" onClick={() => setShowAbout(false)}>Destinations</NavLink>
-          <NavLink href="#" onClick={() => setShowAbout(true)}>À propos</NavLink>
-          <NavLink href="#">Contact</NavLink>
+          <NavLink href="#" onClick={() => {
+            setShowAbout(false);
+            setShowActions(false);
+            setShowVisits(false);
+            setShowAdmin(false);
+          }}>Accueil</NavLink>
+          <NavLink href="#" onClick={() => {
+            setShowAbout(false);
+            setShowActions(true);
+            setShowVisits(false);
+            setShowAdmin(false);
+          }}>Actions</NavLink>
+          <NavLink href="#" onClick={() => {
+            setShowAbout(false);
+            setShowActions(false);
+            setShowVisits(true);
+            setShowAdmin(false);
+          }}>Visits</NavLink>
+          <NavLink href="#" onClick={() => {
+            setShowAbout(false);
+            setShowActions(false);
+            setShowVisits(false);
+            setShowAdmin(true);
+          }}>Admin</NavLink>
+          <NavLink href="#" onClick={() => {
+  setShowAbout(true);
+  setShowActions(false);
+  setShowVisits(false);
+  setShowAdmin(false);
+}}>About</NavLink>
         </NavLinks>
       </Navbar>
 
-      {!showAbout ? (
+      {!showAbout && !showActions && !showVisits && !showAdmin ? (
         <>
           <Hero>
             <div>
@@ -203,101 +270,48 @@ function App() {
           </Hero>
 
           <CategoryFilter>
-            {cities.map((city) => (
-              <CategoryButton
-                key={city}
-                onClick={() => setActiveCity(city === activeCity ? null : city)}
-                style={{
-                  background: city === activeCity ? '#e74c3c' : 'white',
-                  color: city === activeCity ? 'white' : 'inherit'
-                }}
-              >
-                {city}
-              </CategoryButton>
-            ))}
-          </CategoryFilter>
-
-          <CategoryFilter>
-            {categories.map((category) => (
-              <CategoryButton
-                key={category}
-                onClick={() => setActiveCategory(category === activeCategory ? null : category)}
-                style={{
-                  background: category === activeCategory ? '#e74c3c' : 'white',
-                  color: category === activeCategory ? 'white' : 'inherit'
-                }}
-              >
-                {category}
-              </CategoryButton>
-            ))}
+            <div>
+              {cities.map((city) => (
+                <CategoryButton
+                  key={city}
+                  onClick={() => setActiveCity(city === activeCity ? null : city)}
+                  style={{
+                    background: city === activeCity ? '#e74c3c' : 'white',
+                    color: city === activeCity ? 'white' : 'inherit'
+                  }}
+                >
+                  {city}
+                </CategoryButton>
+              ))}
+            </div>
+            <div>
+              {categories.map((category) => (
+                <CategoryButton
+                  key={category}
+                  onClick={() => setActiveCategory(category === activeCategory ? null : category)}
+                  style={{
+                    background: category === activeCategory ? '#e74c3c' : 'white',
+                    color: category === activeCategory ? 'white' : 'inherit'
+                  }}
+                >
+                  {category}
+                </CategoryButton>
+              ))}
+            </div>
           </CategoryFilter>
 
           <Attractions activeCategory={activeCategory} activeCity={activeCity} />
-
-          <Section background="#f8f9fa">
-            <h2 style={{ textAlign: 'center', marginBottom: '2rem' }}>Réservez Votre Voyage</h2>
-            <Form onSubmit={handleSubmit}>
-              <Input
-                type="text"
-                name="nom"
-                placeholder="Votre nom"
-                value={formData.nom}
-                onChange={handleChange}
-                required
-              />
-              <Input
-                type="email"
-                name="email"
-                placeholder="Votre email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-              <Input
-                type="tel"
-                name="telephone"
-                placeholder="Votre téléphone"
-                value={formData.telephone}
-                onChange={handleChange}
-                required
-              />
-              <Input
-                type="date"
-                name="dateArrivee"
-                placeholder="Date d'arrivée"
-                value={formData.dateArrivee}
-                onChange={handleChange}
-                required
-              />
-              <Input
-                type="date"
-                name="dateDepart"
-                placeholder="Date de départ"
-                value={formData.dateDepart}
-                onChange={handleChange}
-                required
-              />
-              <Input
-                type="number"
-                name="budget"
-                placeholder="Votre budget (en MAD)"
-                value={formData.budget}
-                onChange={handleChange}
-                required
-              />
-              <Button
-                type="submit"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Réserver maintenant
-              </Button>
-            </Form>
-          </Section>
         </>
+      ) : showActions ? (
+        <Actions activeCategory={activeCategory} />
+      ) : showVisits ? (
+        <Visits />
+      ) : showAdmin ? (
+        <AdminDashboard />
       ) : (
         <About />
       )}
+      <Footer />
     </Container>
   );
 }

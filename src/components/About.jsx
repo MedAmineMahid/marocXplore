@@ -1,4 +1,6 @@
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { getItems } from '../utils/database';
 import styled from 'styled-components';
 
 const AboutSection = styled.section`
@@ -64,36 +66,6 @@ const TeamMemberDescription = styled.p`
   line-height: 1.6;
 `;
 
-const teamMembers = [
-  {
-    id: 1,
-    name: 'Sarah El Mansouri',
-    role: 'Lead Developer',
-    description: 'Experte en développement web avec une passion pour la création d\'interfaces utilisateur intuitives et performantes.',
-    image: '/images/team/sarah.jpg'
-  },
-  {
-    id: 2,
-    name: 'Youssef Alami',
-    role: 'UI/UX Designer',
-    description: 'Designer créatif spécialisé dans la conception d\'expériences utilisateur mémorables et esthétiques.',
-    image: '/images/team/youssef.jpg'
-  },
-  {
-    id: 3,
-    name: 'Fatima Zahra Bennani',
-    role: 'Full Stack Developer',
-    description: 'Développeuse polyvalente avec une expertise en technologies front-end et back-end.',
-    image: '/images/team/fatima.jpg'
-  },
-  {
-    id: 4,
-    name: 'Karim Idrissi',
-    role: 'Project Manager',
-    description: 'Gestionnaire de projet expérimenté avec un fort accent sur la satisfaction client et la qualité.',
-    image: '/images/team/karim.jpg'
-  }
-];
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -101,6 +73,15 @@ const cardVariants = {
 };
 
 function About() {
+  const [teamMembers, setTeamMembers] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getItems('about');
+      setTeamMembers(data);
+    };
+    fetchData();
+  }, []);
   return (
     <AboutSection>
       <motion.h2
